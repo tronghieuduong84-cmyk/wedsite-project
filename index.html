@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Code Studio</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card: #151a27;
+            --border: #2a3142;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent2: #8b5cf6;
+            --green: #22c55e;
+            --red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ========== LANGUAGE SELECTOR ========== */
+        #langScreen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0b0f19, #1e1b4b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .lang-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .lang-box h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lang-box p {
+            color: var(--muted);
+            margin-bottom: 35px;
+            font-size: 15px;
+        }
+
+        .lang-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            min-width: 140px;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ========== MAIN LAYOUT ========== */
+        #mainApp {
+            display: none;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu button {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .page {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 24px 80px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== HOME ========== */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #e2e8f0, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero .lead {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 720px;
+            margin: 0 auto 30px;
+        }
+
+        .intro-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            line-height: 1.8;
+            color: #cbd5e1;
+            font-size: 16px;
+        }
+
+        .intro-content h2 {
+            color: #e2e8f0;
+            font-size: 24px;
+            margin: 30px 0 15px;
+        }
+
+        .intro-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .intro-content p {
+            margin-bottom: 16px;
+        }
+
+        /* ========== PROJECTS PAGE ========== */
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .section-desc {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px 24px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(59, 130, 246, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #f1f5f9;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        /* Profile cards */
+        .profile-logo {
+            width: 56px;
+            height: 56px;
+            border: 2px solid #6b7280;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: #e2e8f0;
+            background: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .profile-info {
+            color: var(--muted);
+            font-size: 14.5px;
+            line-height: 1.7;
+        }
+
+        .profile-info strong {
+            color: #e2e8f0;
+        }
+
+        /* Contact buttons */
+        .contact-bar {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .btn-discord {
+            background: #5865F2;
+            color: white;
+        }
+
+        .btn-discord:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+        }
+
+        .btn-zalo {
+            background: #0068ff;
+            color: white;
+        }
+
+        .btn-zalo:hover {
+            background: #0052cc;
+            transform: translateY(-2px);
+        }
+
+        /* ========== CODE PAGE ========== */
+        .code-container {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .code-title {
+            background: #161b22;
+            padding: 14px 20px;
+            border-bottom: 1px solid #21262d;
+            font-weight: 600;
+            font-size: 15px;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .code-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .code-body::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        .code-body::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        .code-line {
+            white-space: pre;
+            margin-bottom: 1px;
+        }
+
+        .line-num {
+            color: #484f58;
+            display: inline-block;
+            width: 40px;
+            text-align: right;
+            margin-right: 16px;
+            user-select: none;
+        }
+
+        .c1 { color: #ff7b72; }
+        .c2 { color: #7ee787; }
+        .c3 { color: #d2a8ff; }
+        .c4 { color: #79c0ff; }
+        .c5 { color: #e6edf3; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .menu button { padding: 8px 12px; font-size: 13px; }
+            .intro-content { padding: 24px; }
+            .section-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LANGUAGE SELECTOR ========== -->
+    <div id="langScreen">
+        <div class="lang-box">
+            <h1>Select Language</h1>
+            <p>Please choose your preferred language to continue</p>
+            <div class="lang-buttons">
+                <button class="lang-btn" onclick="setLanguage('vi')">Vietnam</button>
+                <button class="lang-btn" onclick="setLanguage('en')">English</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN APP ========== -->
+    <div id="mainApp">
+        <header>
+            <div class="nav">
+                <div class="logo">Pro Code Studio</div>
+                <div class="menu">
+                    <button class="active" onclick="showPage('home')" data-page="home" id="btn-home">Home</button>
+                    <button onclick="showPage('projects')" data-page="projects" id="btn-projects">Projects</button>
+                    <button onclick="showPage('code')" data-page="code" id="btn-code">Code</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE 1: HOME -->
+        <div class="page active" id="page-home">
+            <div class="hero">
+                <h1 id="home-title">Professional Code Solutions</h1>
+                <p class="lead" id="home-lead">We build high-quality websites and Discord bots tailored exactly to your requirements.</p>
+            </div>
+
+            <div class="intro-content" id="home-content">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+
+        <!-- PAGE 2: PROJECTS & PROFILES -->
+        <div class="page" id="page-projects">
+            <h2 class="section-title" id="projects-title">Our Projects & Team</h2>
+            <p class="section-desc" id="projects-desc">Explore our services and the people behind the code</p>
+
+            <div class="cards">
+                <!-- Card 1 -->
+                <div class="card">
+                    <div class="card-icon">💻</div>
+                    <h3 id="card1-title">Custom Website Development</h3>
+                    <p id="card1-desc">We create complete websites based on client requirements. Features, interface and functionality are built exactly as requested.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3 id="card2-title">Discord Bot Development</h3>
+                    <p id="card2-desc">We build custom Discord bots. Bot avatar, commands and command functions are provided by the client and implemented precisely.</p>
+                </div>
+
+                <!-- Card 3 - Profile Hiếu -->
+                <div class="card">
+                    <div class="profile-logo">H</div>
+                    <h3 id="card3-title">Developer Profile</h3>
+                    <div class="profile-info" id="card3-desc">
+                        <strong>Name:</strong> Trọng Hiếu<br>
+                        <strong>Country:</strong> Vietnam<br>
+                        <strong>Birth Year:</strong> 2011<br>
+                        <strong>Expertise:</strong> Writing code, creating bot structures, websites, bot commands, bot functions, launching bots.
+                    </div>
+                </div>
+
+                <!-- Card 4 - Profile Dark -->
+                <div class="card">
+                    <div class="card-icon">🌑</div>
+                    <h3 id="card4-title">Developer Profile</h3>
+                    <div class="profile-info" id="card4-desc">
+                        <strong>Name:</strong> Dark<br>
+                        <strong>Country:</strong> Bangladesh<br>
+                        <strong>Birth Year:</strong> 2005<br>
+                        <strong>Expertise:</strong> Maintaining bots 24/7 (yearly fee), writing website & bot code, bot/website structure, designing beautiful themed interfaces for bots and websites according to client criteria.
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="card">
+                    <div class="card-icon">🛠️</div>
+                    <h3 id="card5-title">Full Support & Maintenance</h3>
+                    <p id="card5-desc">We provide continuous support, updates and maintenance for both websites and Discord bots to ensure stable long-term performance.</p>
+                </div>
+            </div>
+
+            <div class="contact-bar">
+                <a href="https://discord.gg/zddBHkumQ" target="_blank" class="contact-btn btn-discord" id="btn-discord">
+                    🎮 Join Discord Server
+                </a>
+                <a href="https://zalo.me/84327978429" target="_blank" class="contact-btn btn-zalo" id="btn-zalo">
+                    💬 Contact via Zalo
+                </a>
+            </div>
+        </div>
+
+        <!-- PAGE 3: CODE -->
+        <div class="page" id="page-code">
+            <h2 class="section-title" id="code-title">JavaScript Code</h2>
+            <p class="section-desc" id="code-desc">Sample code snippets from our projects</p>
+
+            <div class="code-container">
+                <div class="code-title">📄 JavaScript</div>
+                <div class="code-body" id="codeBoard"></div>
+            </div>
+
+            <div class="contact-bar">
+                <a href="https://discord.gg/zddBHkumQ" target="_blank" class="contact-btn btn-discord">
+                    🎮 Join Discord Server
+                </a>
+                <a href="https://zalo.me/84327978429" target="_blank" class="contact-btn btn-zalo">
+                    💬 Contact via Zalo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===================== TRANSLATIONS =====================
+        const i18n = {
+            en: {
+                "btn-home": "Home",
+                "btn-projects": "Projects",
+                "btn-code": "Code",
+                "home-title": "Professional Code Solutions",
+                "home-lead": "We build high-quality websites and Discord bots tailored exactly to your requirements.",
+                "home-content": `
+                    <h2>Welcome to Pro Code Studio</h2>
+                    <p>We are a specialized development team focused on delivering high-performance websites and custom Discord bots. Every project is carefully crafted to match the exact vision and technical requirements of our clients.</p>
+                    
+                    <h2>Our Mission</h2>
+                    <p>Our goal is simple: turn your ideas into fully functional digital products. Whether you need a modern website or a powerful Discord bot, we handle everything from structure and logic to beautiful interface design.</p>
+                    
+                    <h2>Website Development</h2>
+                    <p>We create complete websites according to client specifications. This includes custom features, responsive interfaces, smooth interactions and reliable functionality. Every element is built to work exactly as requested.</p>
+                    
+                    <h2>Discord Bot Development</h2>
+                    <p>We develop Discord bots tailored to your server needs. You provide the bot avatar, the list of commands and the purpose of each command. We implement everything precisely so the bot performs exactly as you designed.</p>
+                    
+                    <h2>Why Choose Us</h2>
+                    <p>We combine technical expertise with clear communication. Projects are delivered with clean code, attention to detail and long-term support options. Stability, performance and visual quality are always prioritized.</p>
+                    
+                    <h2>Continuous Support</h2>
+                    <p>Beyond development, we also offer maintenance services. Bots can be kept online 24/7 with yearly support plans, and websites can receive updates and improvements whenever needed.</p>
+                `,
+                "projects-title": "Our Projects & Team",
+                "projects-desc": "Explore our services and the people behind the code",
+                "card1-title": "Custom Website Development",
+                "card1-desc": "We create complete websites based on client requirements. Features, interface and functionality are built exactly as requested.",
+                "card2-title": "Discord Bot Development",
+                "card2-desc": "We build custom Discord bots. Bot avatar, commands and command functions are provided by the client and implemented precisely.",
+                "card3-title": "Developer Profile",
+                "card3-desc": `<strong>Name:</strong> Trọng Hiếu<br>
+<strong>Country:</strong> Vietnam<br>
+<strong>Birth Year:</strong> 2011<br>
+<strong>Expertise:</strong> Writing code, creating bot structures, websites, bot commands, bot functions, launching bots.`,
+                "card4-title": "Developer Profile",
+                "card4-desc": `<strong>Name:</strong> Dark<br>
+<strong>Country:</strong> Bangladesh<br>
+<strong>Birth Year:</strong> 2005<br>
+<strong>Expertise:</strong> Maintaining bots 24/7 (yearly fee), writing website & bot code, bot/website structure, designing beautiful themed interfaces for bots and websites according to client criteria.`,
+                "card5-title": "Full Support & Maintenance",
+                "card5-desc": "We provide continuous support, updates and maintenance for both websites and Discord bots to ensure stable long-term performance.",
+                "btn-discord": "🎮 Join Discord Server",
+                "btn-zalo": "💬 Contact via Zalo",
+                "code-title": "JavaScript Code",
+                "code-desc": "Sample code snippets from our projects"
+            },
+            vi: {
+                "btn-home": "Trang chủ",
+                "btn-projects": "Dự án",
+                "btn-code": "Mã nguồn",
+                "home-title": "Giải Pháp Lập Trình Chuyên Nghiệp",
+                "home-lead": "Chúng tôi xây dựng website và bot Discord chất lượng cao, đúng theo yêu cầu của bạn.",
+                "home-content": `
+                    <h2>Chào mừng đến với Pro Code Studio</h2>
+                    <p>Chúng tôi là đội ngũ phát triển chuyên sâu, tập trung vào việc tạo ra những website hiệu suất cao và bot Discord tùy chỉnh. Mỗi dự án đều được xây dựng cẩn thận để khớp chính xác với ý tưởng và yêu cầu kỹ thuật của khách hàng.</p>
+                    
+                    <h2>Sứ mệnh của chúng tôi</h2>
+                    <p>Mục tiêu của chúng tôi rất rõ ràng: biến ý tưởng của bạn thành sản phẩm số hoàn chỉnh và hoạt động tốt. Dù bạn cần một website hiện đại hay một bot Discord mạnh mẽ, chúng tôi đều xử lý từ cấu trúc, logic đến thiết kế giao diện đẹp mắt.</p>
+                    
+                    <h2>Phát triển Website</h2>
+                    <p>Chúng tôi tạo website hoàn chỉnh theo đúng yêu cầu của khách hàng. Bao gồm các tính năng tùy chỉnh, giao diện responsive, tương tác mượt mà và chức năng hoạt động ổn định. Mọi thứ đều được xây dựng đúng như những gì bạn yêu cầu.</p>
+                    
+                    <h2>Phát triển Bot Discord</h2>
+                    <p>Chúng tôi phát triển bot Discord theo nhu cầu của server bạn. Bạn cung cấp ảnh đại diện bot, danh sách lệnh và tác dụng của từng lệnh. Chúng tôi sẽ lập trình chính xác để bot hoạt động đúng như thiết kế của bạn.</p>
+                    
+                    <h2>Tại sao nên chọn chúng tôi</h2>
+                    <p>Chúng tôi kết hợp chuyên môn kỹ thuật với cách làm việc rõ ràng. Dự án được giao với code sạch, chú trọng chi tiết và có hỗ trợ dài hạn. Sự ổn định, hiệu suất và chất lượng giao diện luôn được đặt lên hàng đầu.</p>
+                    
+                    <h2>Hỗ trợ liên tục</h2>
+                    <p>Ngoài việc phát triển, chúng tôi còn cung cấp dịch vụ bảo trì. Bot có thể được duy trì hoạt động 24/7 với gói hỗ trợ theo năm, và website có thể được cập nhật, cải tiến bất cứ khi nào cần.</p>
+                `,
+                "projects-title": "Dự Án & Đội Ngũ",
+                "projects-desc": "Khám phá các dịch vụ và những người đứng sau mã nguồn",
+                "card1-title": "Phát triển Website theo yêu cầu",
+                "card1-desc": "Chúng tôi tạo website hoàn chỉnh theo yêu cầu của khách hàng. Tính năng, giao diện và hoạt động đều được xây dựng đúng như yêu cầu.",
+                "card2-title": "Phát triển Bot Discord",
+                "card2-desc": "Chúng tôi tạo bot Discord theo yêu cầu. Ảnh đại diện bot, lệnh bot và tác dụng của các lệnh do khách cung cấp và được triển khai chính xác.",
+                "card3-title": "Hồ sơ lập trình viên",
+                "card3-desc": `<strong>Tên:</strong> Trọng Hiếu<br>
+<strong>Quốc gia:</strong> Việt Nam<br>
+<strong>Sinh năm:</strong> 2011<br>
+<strong>Chuyên về:</strong> Viết code, tạo cấu trúc bot, website, lệnh bot, tác dụng của bot, website, khởi chạy bot.`,
+                "card4-title": "Hồ sơ lập trình viên",
+                "card4-desc": `<strong>Tên:</strong> Dark<br>
+<strong>Quốc gia:</strong> Bangladesh<br>
+<strong>Sinh năm:</strong> 2005<br>
+<strong>Chuyên về:</strong> Duy trì bot hoạt động 24/7 (tính phí theo năm), viết code website & bot, cấu trúc bot/website, thiết kế giao diện bot và website đẹp mắt theo chủ đề và tiêu chí của khách hàng.`,
+                "card5-title": "Hỗ trợ & Bảo trì toàn diện",
+                "card5-desc": "Chúng tôi cung cấp hỗ trợ liên tục, cập nhật và bảo trì cho cả website lẫn bot Discord nhằm đảm bảo hoạt động ổn định lâu dài.",
+                "btn-discord": "🎮 Tham gia Server Discord",
+                "btn-zalo": "💬 Liên hệ qua Zalo",
+                "code-title": "Mã JavaScript",
+                "code-desc": "Một số đoạn mã mẫu từ các dự án của chúng tôi"
+            }
+        };
+
+        let currentLang = "en";
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById("langScreen").style.display = "none";
+            document.getElementById("mainApp").style.display = "block";
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const t = i18n[currentLang];
+
+            // Menu
+            document.getElementById("btn-home").textContent = t["btn-home"];
+            document.getElementById("btn-projects").textContent = t["btn-projects"];
+            document.getElementById("btn-code").textContent = t["btn-code"];
+
+            // Home
+            document.getElementById("home-title").textContent = t["home-title"];
+            document.getElementById("home-lead").textContent = t["home-lead"];
+            document.getElementById("home-content").innerHTML = t["home-content"];
+
+            // Projects
+            document.getElementById("projects-title").textContent = t["projects-title"];
+            document.getElementById("projects-desc").textContent = t["projects-desc"];
+            document.getElementById("card1-title").textContent = t["card1-title"];
+            document.getElementById("card1-desc").textContent = t["card1-desc"];
+            document.getElementById("card2-title").textContent = t["card2-title"];
+            document.getElementById("card2-desc").textContent = t["card2-desc"];
+            document.getElementById("card3-title").textContent = t["card3-title"];
+            document.getElementById("card3-desc").innerHTML = t["card3-desc"];
+            document.getElementById("card4-title").textContent = t["card4-title"];
+            document.getElementById("card4-desc").innerHTML = t["card4-desc"];
+            document.getElementById("card5-title").textContent = t["card5-title"];
+            document.getElementById("card5-desc").textContent = t["card5-desc"];
+
+            // Buttons
+            document.querySelectorAll("#btn-discord, .btn-discord").forEach(el => {
+                el.innerHTML = t["btn-discord"];
+            });
+            document.querySelectorAll("#btn-zalo, .btn-zalo").forEach(el => {
+                el.innerHTML = t["btn-zalo"];
+            });
+
+            // Code page
+            document.getElementById("code-title").textContent = t["code-title"];
+            document.getElementById("code-desc").textContent = t["code-desc"];
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.getElementById("page-" + pageId).classList.add("active");
+
+            document.querySelectorAll(".menu button").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.dataset.page === pageId) btn.classList.add("active");
+            });
+        }
+
+        // ===================== 200 LINES OF CODE =====================
+        const codeLines = [];
+        const names = ["Trọng Hiếu", "Dark"];
+        const templates = [
+            `const developer = { name: "{name}", role: "Fullstack Developer", country: "Vietnam / Bangladesh" };`,
+            `async function deployBot(name = "{name}") { return await client.login(process.env.TOKEN); }`,
+            `class WebsiteBuilder { constructor(author = "{name}") { this.author = author; this.version = "2.4.1"; } }`,
+            `function createCommand(name, description, author = "{name}") { return { name, description, author }; }`,
+            `const team = ["{name}", "Dark", "Trọng Hiếu"].filter(n => n.length > 0);`,
+            `export const config = { maintainer: "{name}", uptime: "24/7", support: true };`,
+            `async function keepAlive(botName = "{name}") { setInterval(() => console.log(botName + " is online"), 60000); }`,
+            `const project = { title: "Custom Discord Bot", developer: "{name}", status: "Production" };`,
+            `function generateStructure(type, author = "{name}") { return { type, author, createdAt: Date.now() }; }`,
+            `class Profile { constructor(name = "{name}") { this.name = name; this.skills = ["JS", "Node", "HTML", "CSS"]; } }`,
+            `const logger = (msg) => console.log("[${new Date().toISOString()}] {name}: " + msg);`,
+            `async function buildWebsite(req, author = "{name}") { return { html: true, css: true, js: true, author }; }`,
+            `const botConfig = { prefix: "!", owner: "{name}", intents: ["Guilds", "GuildMessages"] };`,
+            `function validateCommand(cmd, developer = "{name}") { return cmd && developer ? true : false; }`,
+            `export default function init(name = "{name}") { console.log("System started by " + name); }`,
+            `const services = [{ name: "Website", dev: "{name}" }, { name: "Bot", dev: "Dark" }];`,
+            `class Maintenance { constructor(by = "{name}") { this.by = by; this.yearly = true; } }`,
+            `async function launch(project, author = "{name}") { console.log(author + " launched " + project); }`,
+            `const meta = { codedBy: "{name}", year: 2026, license: "Private" };`,
+            `function renderUI(theme, designer = "{name}") { return { theme, designer, responsive: true }; }`
+        ];
+
+        for (let i = 0; i < 200; i++) {
+            const name = names[i % 2];
+            const tpl = templates[i % templates.length];
+            codeLines.push(tpl.replace(/{name}/g, name));
+        }
+
+        // Colorize and render code
+        const colors = ["c1", "c2", "c3", "c4", "c5"];
+        function colorizeLine(line) {
+            const parts = line.split(/(\s+|[{}()\[\];,.=<>!&|?:/"'`])/).filter(p => p.length > 0);
+            let html = "";
+            let c = 0;
+            parts.forEach((p, i) => {
+                html += `<span class="${colors[c % colors.length]}">${p.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span>`;
+                if (i % 2 === 1) c++;
+            });
+            return html;
+        }
+
+        const board = document.getElementById("codeBoard");
+        codeLines.forEach((line, idx) => {
+            const div = document.createElement("div");
+            div.className = "code-line";
+            div.innerHTML = `<span class="line-num">${String(idx + 1).padStart(3, " ")}</span>${colorizeLine(line)}`;
+            board.appendChild(div);
+        });
+    </script>
+</body>
+</html>
